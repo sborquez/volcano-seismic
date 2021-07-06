@@ -9,7 +9,7 @@ Automatic classification of seismic signals from Llaima volcano (Chile).
 project_dir="$(pwd)/volcano-seismic_classifier"
 git clone https://github.com/sborquez/volcano-seismic_classifier.git $project_dir
 # Run DataScience docker and mount project folder.
-sudo docker run --name volcano-seismic_classifier --gpus all --rm -it -p 8888:8888 -p 8787:8787 -p 8786:8786 -v "$project_dir:/rapids/host/notebooks sborquez/datascience:latest-gpu"
+sudo docker run --name volcano-seismic_classifier --gpus all --rm -it -p 8888:8888 -p 8787:8787 -p 8786:8786 -v "$project_dir:/rapids/host/notebooks" sborquez/datascience:latest-gpu
 # Download Datasets
 (rapis)$ python /rapids/host/notebooks get_data.py --all
 # Open your browser http://localhost:8888/lab? and go to host/notebooks
