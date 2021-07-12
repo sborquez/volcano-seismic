@@ -2,10 +2,50 @@ import os
 import json
 from pathlib import Path
 import requests
+import collections
+import numpy as np
+import h5py
 
+# Structures    
+Dataset = collections.namedtuple("Dataset", ["X", "y"])
 
+# Preprocessing
+def read_dataset(data_dir, name="raw"):
+    filename = name + ".npz"
+    data = np.load(os.path.join(data_dir, filename))
+    return Dataset(X=data["X"], y=data["y"])
+
+def load_file(filename, filetype="hdf5"):
+    if filetype == "hdf5":            
+        with h5py.File(filename, "r") as f:
+            # List all groups
+            a_group_key = list(f.keys())[0]
+            # Get the data
+            data = np.array(f[a_group_key])
+    else:
+        raise ValueError(f"{filetype} not supported.")
+    return data
+        
+def setup_dataset(**classes_data):
+    labels = sorted(list(classes_data.keys()))
+    num_classes = len(labels)
+    X, y = None, None
+    for c, label in enumerate(labels):
+        X_c = classes_data[label].squeeze().copy()
+        X_c[:,:] -= np.expand_dims(X_c[:, -1], -1) 
+        y_c = len(X_c)*[c]
+        if X is None:
+            X, y = X_c, y_c
+        else:
+            X = np.vstack((X, X_c))
+            y = np.hstack((y, y_c))
+    return X.astype(np.float32), y.astype(np.float32), labels, num_classes
+
+## CMD
+# Datasets DB
 DATASETS = dict()
 BY_TAGS = dict()
+
 def create_folder(output_folder):
     """Create dataset folder."""
     output_path = Path(output_folder)

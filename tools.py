@@ -4,14 +4,18 @@ import warnings
 from pathlib import Path
 from tqdm.notebook import tqdm
 from IPython.core.display import display, HTML
-#import wandb as wandb
+import wandb as wandb
 import datetime
+import h5py
+import multiprocessing
+import collections
 
 # DataScience-CPU
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import sklearn
 
 # DataScience-GPU
 try:
@@ -40,13 +44,27 @@ except:
     warnings.warn("Dask skipped!")
 
 
+# Structures    
+Worker = collections.namedtuple("Worker", ("queue", "process"))
+WorkerInitData = collections.namedtuple("WorkerInitData",
+    ("num", "sweep_id", "sweep_run_name", "config", "dataset_artifact_name", "train_index", "test_index", "labels", "num_classes")
+)
+WorkerDoneData = collections.namedtuple("WorkerDoneData", 
+    ("metrics", 
+    #"plots", "top_best_index", "top_worst_index",
+    "X_test", "y_test", "y_prob")
+)
+
 def reset_kernel(): 
-    os._exit(00)
+    os._exit(0)
+
 
 __all__ = [
     "os", "Path", "tqdm", "display", "HTML",
-    "datetime", "plt", "sns", "np", "pd", 
-    "reset_kernel" 
+    "datetime", "plt", "sns", "np", "pd", "sklearn",
+    "wandb", "h5py", "multiprocessing", "collections",
+    "Worker", "WorkerInitData", "WorkerDoneData",
+    "reset_kernel"
 ]
 __all__ += __gpu_all__
 __all__ += __dist_all__
