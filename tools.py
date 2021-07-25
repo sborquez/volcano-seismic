@@ -30,7 +30,8 @@ except:
 # Distributed DataScience
 try:
     import dask_cudf
-    __dist_all__ = ["dask_cudf"]
+    import dask
+    __dist_all__ = ["dask", "dask_cudf"]
 except:
     __dist_all__ = []
     warnings.warn("Dask skipped!")
@@ -41,18 +42,16 @@ try:
     __dl_all__ = ["tf"]
 except:
     __dl_all__ = []
-    warnings.warn("Dask skipped!")
+    warnings.warn("Tensorflow skipped!")
 
 
 # Structures    
 Worker = collections.namedtuple("Worker", ("queue", "process"))
 WorkerInitData = collections.namedtuple("WorkerInitData",
-    ("num", "sweep_id", "sweep_run_name", "config", "dataset_artifact_name", "train_index", "test_index", "labels", "num_classes")
+    ("num", "project", "sweep_id", "sweep_run_name", "config", "dataset_artifact_name", "train_index", "test_index", "labels", "num_classes")
 )
 WorkerDoneData = collections.namedtuple("WorkerDoneData", 
-    ("metrics", 
-    #"plots", "top_best_index", "top_worst_index",
-    "X_test", "y_test", "y_prob")
+    ("num", "X_test", "y_test", "y_prob", "metrics")
 )
 
 def reset_kernel(): 
